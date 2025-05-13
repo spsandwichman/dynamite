@@ -1,15 +1,14 @@
-#include "c4.h"
+#include "dnmt.h"
 
-#   define Reset "\x1b[0m"
-#   define Bold "\x1b[1m"
-#   define Dim "\x1b[2m"
-#   define Italic "\x1b[3m"
-#   define Underline "\x1b[4m"
+#define Reset "\x1b[0m"
+#define Bold "\x1b[1m"
+#define Dim "\x1b[2m"
+#define Italic "\x1b[3m"
+#define Underline "\x1b[4m"
 
-#   define Black "\x1b[30m"
-#   define Red "\x1b[31m"
-#   define Green "\x1b[32m"
-#   define Yellow "\x1b[33m"
+#define Red "\x1b[31m"
+#define Green "\x1b[32m"
+#define Yellow "\x1b[33m"
 
 void bitboard_print(u64 bits) {
     printf("╭╴"Bold"a"Reset"-"Bold"b"Reset"-"Bold"c"Reset"-"Bold"d"Reset"-"
@@ -19,7 +18,7 @@ void bitboard_print(u64 bits) {
         for_n(j, 0, 7) {
             u64 bit = COL_BITS(j) & ROW_BITS(i);
             if (bit & bits) {
-                printf(Red Bold "x "Reset);
+                printf(Green Bold "x "Reset);
             } else {
                 printf(Dim". "Reset);
             }
@@ -88,11 +87,18 @@ u64 board_colorless_pieces(u64 player, u64 opponent) {
 u64 board_place_pos(Board b, u8 column) {
     u64 occupied = (b.red | b.yel);
     u64 occupied_in_col = occupied & COL_BITS(column);
-    // if (occupied_in_col == COL_BITS(column)) {
-    //     return CANNOT_PLACE;
-    // }
     if (occupied_in_col) {
         return (1ull << (__builtin_ctzll(occupied_in_col) - 8)) & BOARD;
     }
     return (1ull << (column + 40));
+}
+
+bool board_can_place(Board b, u8 column) {
+    u64 occupied = (b.red | b.yel);
+    return ~occupied & (1ull << column);
+}
+
+bool board_can_place_anywhere(Board b) {
+    u64 occupied = (b.red | b.yel);
+    return ~occupied & ROW_BITS(0);
 }

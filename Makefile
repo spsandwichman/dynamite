@@ -1,6 +1,7 @@
 
 SRCPATHS = \
 	src/*.c \
+	src/player/*.c \
 
 SRC = $(wildcard $(SRCPATHS))
 OBJECTS = $(SRC:src/%.c=build/%.o)
@@ -12,7 +13,7 @@ LD = gcc
 
 INCLUDEPATHS = -Isrc/
 ASANFLAGS = -fsanitize=undefined -fsanitize=address
-CFLAGS = -std=gnu2x -g -fwrapv -fno-strict-aliasing -march=native
+CFLAGS = -std=gnu2x -g -march=native
 WARNINGS = -Wall -Wimplicit-fallthrough -Wno-deprecated-declarations -Wno-enum-compare -Wno-unused -Wno-format -Wno-enum-conversion -Wincompatible-pointer-types -Wno-discarded-qualifiers -Wno-strict-aliasing
 ALLFLAGS = $(CFLAGS) $(WARNINGS)
 OPT = -Ofast -flto 
