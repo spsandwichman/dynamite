@@ -1,4 +1,5 @@
 #include "dnmt.h"
+#include <stdio.h>
 
 static u8 bit_rev(u8 x) {
     x = ((x & 0b11110000) >> 4) | ((x & 0b00001111) << 4);
@@ -38,6 +39,7 @@ GameResult play_game(const Player* red, const Player* yellow, bool print) {
     while (board_can_place_anywhere(b)) {
         // ask red for a placement
         u8 place_column = red->place(red_ctx, b.red, b.yel);
+        if (print) printf("red: %c\n", place_column + 'a');
         // see if it actually works
         if (!board_can_place(b, place_column)) {
             return GR_RED_INVALID;
@@ -58,6 +60,7 @@ GameResult play_game(const Player* red, const Player* yellow, bool print) {
 
         // ask yellow for a placement
         place_column = yellow->place(yellow_ctx, b.yel, b.red);
+        if (print) printf("yellow: %c\n", place_column + 'a');
         // see if it actually works
         if (!board_can_place(b, place_column)) {
             return GR_YELLOW_INVALID;
@@ -76,17 +79,22 @@ GameResult play_game(const Player* red, const Player* yellow, bool print) {
 }
 
 int main() {
-    Board b = {};
-
-    // b = from_string(""
-    //     "......."
-    //     "......."
-    //     "......."
-    //     "......."
-    //     "......."
-    //     "......."
-    // );
-
-    board_print(b);
     GameResult gr = play_game(&player_user, &player_random, true);
+    switch (gr) {
+    case GR_DRAW:
+        printf("draw!\n");
+        break;
+    case GR_RED_WIN:
+        printf("red wins!\n");
+        break;
+    case GR_YELLOW_WIN:
+        printf("yellow wins!\n");
+        break;
+    case GR_RED_INVALID:
+        printf("red made an invalid move!\n");
+        break;
+    case GR_YELLOW_INVALID:
+        printf("yellow made an invalid move!\n");
+        break;
+    }
 }
